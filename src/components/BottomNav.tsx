@@ -1,15 +1,21 @@
 import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import LeaderboardRoundedIcon from '@mui/icons-material/LeaderboardRounded';
+import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
+import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const ROUTES = ['/', '/leaderboard', '/profile'];
+const ROUTES = ['/', '/', '/leaderboard', '/profile', '/profile'];
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
-  const value = Math.max(0, ROUTES.indexOf(location.pathname));
+
+  const value =
+    location.pathname === '/leaderboard' ? 2
+      : location.pathname === '/profile' ? 4
+        : 0;
 
   return (
     <Paper elevation={0} sx={{
@@ -18,7 +24,9 @@ export function BottomNav() {
     }}>
       <BottomNavigation value={value} onChange={(_, v) => navigate(ROUTES[v] as string)}>
         <BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} />
-        <BottomNavigationAction label="Leaderboard" icon={<LeaderboardRoundedIcon />} />
+        <BottomNavigationAction label="Habits" icon={<CheckCircleOutlineRoundedIcon />} />
+        <BottomNavigationAction label="Community" icon={<PeopleRoundedIcon />} />
+        <BottomNavigationAction label="Stats" icon={<BarChartRoundedIcon />} />
         <BottomNavigationAction label="Profile" icon={<PersonRoundedIcon />} />
       </BottomNavigation>
     </Paper>
