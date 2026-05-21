@@ -29,7 +29,7 @@ export function SignupPage() {
     <Box sx={{ minHeight: '100vh', background: 'linear-gradient(160deg, #F8F4FF 0%, #FFF0F8 50%, #F0F8FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
       <Box sx={{ width: '100%', maxWidth: 400 }}>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography sx={{ fontSize: 54, lineHeight: 1, mb: 1 }}>🌱</Typography>
+          <Box component="img" src="/src/assets/icons/AppLogo.png" alt="Habit Tracker" sx={{ width: 80, height: 80, objectFit: 'contain', mb: 1 }} />
           <Typography variant="h4" sx={{ color: '#3D2C5C' }}>Get Started</Typography>
           <Typography variant="body2" sx={{ color: '#9A89B4', mt: 0.5 }}>5 starter habits will be added for you</Typography>
         </Box>
