@@ -30,7 +30,6 @@ export function HomePage() {
   const [topPerformers, setTopPerformers] = useState<LeaderboardEntry[]>([]);
   const navigate = useNavigate();
 
-  const today = format(new Date(), 'yyyy-MM-dd');
   const weeklyData = useMemo(() => getWeeklyData(), [getWeeklyData]);
   const completedCount = habits.filter(h => todayCompletions.has(h.id)).length;
   const firstName = profile?.display_name?.split(' ')[0] ?? 'Friend';
