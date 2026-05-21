@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/** @jsxRuntime classic */
+import React, { useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useHabits } from '../context/HabitsContext';
