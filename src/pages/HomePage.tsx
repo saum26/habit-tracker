@@ -13,6 +13,7 @@ import { DailyRings } from '../components/DailyRings';
 import { AddHabitDialog } from '../components/AddHabitDialog';
 import { supabase } from '../lib/supabase';
 import { LeaderboardEntry } from '../types';
+import styles from './HomePage.module.css';
 
 const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
@@ -62,7 +63,7 @@ export function HomePage() {
         );
       }
     });
-  }, [user]);
+  }, [user, todayCompletions]);
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#F8F4FF', pb: '90px' }}>
@@ -106,12 +107,36 @@ export function HomePage() {
             <Typography variant="caption" sx={{ color: '#BBA9D1', fontWeight: 600, fontSize: 10, letterSpacing: 0.4 }}>
               {format(new Date(), 'MMM d, yyyy').toUpperCase()}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 2, mt: 1.5, alignItems: 'flex-start' }}>
+            <Box sx={{ display: 'flex', gap: 2, mt: 1.5, alignItems: 'center', justifyContent: 'center' }}>
               <DailyRings habits={habits} completedCount={completedCount} />
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.25 }}>
+
+            </Box>
+             {/* Stats Row */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1.5 }}>
+          {[
+            { emoji: '🎯', label: 'Habits', value: habits.length },
+            { emoji: '🔥', label: 'Day Streak', value: `${longestStreak}d` },
+            { emoji: '✅', label: 'Done Today', value: completedCount },
+          ].map(({ emoji, label, value }) => (
+            <Card key={label}>
+              <CardContent sx={{ p: '14px !important', textAlign: 'center' }}>
+                <Typography sx={{ fontSize: 20, lineHeight: 1, mb: 0.5 }}>{emoji}</Typography>
+                <Typography sx={{ color: '#3D2C5C', fontWeight: 800, fontSize: 20, lineHeight: 1 }}>{value}</Typography>
+                <Typography variant="caption" sx={{ color: '#9A89B4', fontSize: 10 }}>{label}</Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+            
+          </CardContent>
+        </Card>
+
+       
+<Box sx={{ flex: 1, minWidth: 0,  }} >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.25, }}>
                   <Typography variant="subtitle2" sx={{ color: '#3D2C5C', fontWeight: 700 }}>Today's Habits</Typography>
                   <Typography variant="caption"
+                   className={styles.habitText}
                     onClick={() => setAddOpen(true)}
                     sx={{ color: '#9C89B8', fontWeight: 600, cursor: 'pointer', fontSize: 11 }}>
                     + Add
@@ -144,27 +169,6 @@ export function HomePage() {
                       );
                     })}
               </Box>
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Stats Row */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1.5 }}>
-          {[
-            { emoji: '🎯', label: 'Habits', value: habits.length },
-            { emoji: '🔥', label: 'Day Streak', value: `${longestStreak}d` },
-            { emoji: '✅', label: 'Done Today', value: completedCount },
-          ].map(({ emoji, label, value }) => (
-            <Card key={label}>
-              <CardContent sx={{ p: '14px !important', textAlign: 'center' }}>
-                <Typography sx={{ fontSize: 20, lineHeight: 1, mb: 0.5 }}>{emoji}</Typography>
-                <Typography sx={{ color: '#3D2C5C', fontWeight: 800, fontSize: 20, lineHeight: 1 }}>{value}</Typography>
-                <Typography variant="caption" sx={{ color: '#9A89B4', fontSize: 10 }}>{label}</Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-
         {/* Weekly Progress + Quote side by side */}
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, alignItems: 'stretch' }}>
           <ProgressCard weeklyData={weeklyData} compact />

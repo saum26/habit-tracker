@@ -18,6 +18,7 @@ export function LeaderboardPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    console.log('entrys', entries);
     async function load() {
       setLoading(true);
       const { data, error } = await supabase.rpc('get_leaderboard');
