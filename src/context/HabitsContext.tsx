@@ -28,7 +28,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = new Date().toISOString().split('T')[0];
 
   const fetchHabits = useCallback(async () => {
     if (!user) return;
