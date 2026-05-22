@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useHabits } from '../context/HabitsContext';
 import { CalendarTracker } from '../components/CalendarTracker';
+import { ReminderSection } from '../components/ReminderSection';
 import { HabitCompletion, HabitNote } from '../types';
 
 const TIPS: Record<string, string[]> = {
@@ -106,15 +107,15 @@ export function HabitDetailPage() {
             <Typography variant="h6" sx={{ color: '#3D2C5C', mb: 2 }}>Stats</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
               {[
-                { icon: <LocalFireDepartmentRoundedIcon sx={{ color: '#FF6B35' }} />, label: 'Current streak', value: `${stats.current_streak}d` },
-                { icon: <EmojiEventsRoundedIcon sx={{ color: '#FFB800' }} />, label: 'Longest streak', value: `${stats.longest_streak}d` },
-                { icon: <TrendingUpRoundedIcon sx={{ color: '#9C89B8' }} />, label: '30-day rate', value: `${stats.success_rate}%` },
-                { icon: <CheckCircleRoundedIcon sx={{ color: '#95D5B2' }} />, label: 'Total done', value: stats.total_completions },
+                { icon: <LocalFireDepartmentRoundedIcon sx={{ color: '#FF6B35', fontSize: 22 }} />, label: 'Current streak', value: `${stats.current_streak}d` },
+                { icon: <EmojiEventsRoundedIcon sx={{ color: '#FFB800', fontSize: 22 }} />, label: 'Longest streak', value: `${stats.longest_streak}d` },
+                { icon: <TrendingUpRoundedIcon sx={{ color: '#9C89B8', fontSize: 22 }} />, label: '30-day rate', value: `${stats.success_rate}%` },
+                { icon: <CheckCircleRoundedIcon sx={{ color: '#95D5B2', fontSize: 22 }} />, label: 'Total done', value: stats.total_completions },
               ].map(({ icon, label, value }) => (
-                <Box key={label} sx={{ background: '#F8F4FF', borderRadius: 3, p: 1.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Box key={label} sx={{ background: '#F8F4FF', borderRadius: 3, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 0.5 }}>
                   {icon}
-                  <Typography variant="h6" sx={{ color: '#3D2C5C', lineHeight: 1 }}>{value}</Typography>
-                  <Typography variant="caption" sx={{ color: '#9A89B4' }}>{label}</Typography>
+                  <Typography variant="h6" sx={{ color: '#3D2C5C', fontWeight: 700, lineHeight: 1, mt: 0.5 }}>{value}</Typography>
+                  <Typography variant="caption" sx={{ color: '#9A89B4', lineHeight: 1.3 }}>{label}</Typography>
                 </Box>
               ))}
             </Box>
@@ -145,6 +146,8 @@ export function HabitDetailPage() {
             </Box>
           </CardContent>
         </Card>
+
+        <ReminderSection habitId={habit.id} habitName={habit.name} habitIcon={habit.icon} />
 
         <Card>
           <CardContent sx={{ p: 2.5 }}>

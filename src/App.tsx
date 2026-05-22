@@ -4,6 +4,7 @@ import { theme } from './theme';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { HabitsProvider } from './context/HabitsContext';
 import { LoadingScreen } from './components/LoadingScreen';
+import { ReminderScheduler } from './components/ReminderScheduler';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { HomePage } from './pages/HomePage';
@@ -28,6 +29,7 @@ function AppRoutes() {
 
   return (
     <HabitsProvider>
+      <ReminderScheduler />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/habit/:id" element={<HabitDetailPage />} />
