@@ -22,6 +22,9 @@ export interface HabitCompletion {
   habit_id: string;
   user_id: string;
   completed_date: string;
+  completed_at?: string;
+  late_check_in: boolean;
+  original_due_date?: string;
   notes?: string;
   created_at: string;
 }

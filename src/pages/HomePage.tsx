@@ -11,6 +11,7 @@ import { ProgressCard } from '../components/ProgressCard';
 import { QuoteCard } from '../components/QuoteCard';
 import { DailyRings } from '../components/DailyRings';
 import { AddHabitDialog } from '../components/AddHabitDialog';
+import { MissedYesterdayBanner } from '../components/MissedYesterdayBanner';
 import { supabase } from '../lib/supabase';
 import { LeaderboardEntry } from '../types';
 import styles from './HomePage.module.css';
@@ -26,7 +27,7 @@ function getGreeting() {
 
 export function HomePage() {
   const { profile, user } = useAuth();
-  const { habits, completions, todayCompletions, getWeeklyData, getHabitStats, loading } = useHabits();
+  const { habits, completions, todayCompletions, yesterdayCompletions, getWeeklyData, getHabitStats, loading } = useHabits();
   const [addOpen, setAddOpen] = useState(false);
   const [topPerformers, setTopPerformers] = useState<LeaderboardEntry[]>([]);
   const navigate = useNavigate();
@@ -100,6 +101,10 @@ export function HomePage() {
       </Box>
 
       <Box sx={{ px: 2, mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* Missed yesterday banner — only show if there are missed habits and we have habits */}
+        {!loading && habits.length > 0 && yesterdayCompletions.size < habits.length && (
+          <MissedYesterdayBanner missedCount={habits.length - yesterdayCompletions.size} />
+        )}
 
         {/* Daily Rings + Today's Habits */}
         <Card>

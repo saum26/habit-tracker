@@ -147,7 +147,7 @@ export function HabitDetailPage() {
           </CardContent>
         </Card>
 
-        <ReminderSection habitId={habit.id} habitName={habit.name} habitIcon={habit.icon} />
+        <ReminderSection habitId={habit.id} />
 
         <Card>
           <CardContent sx={{ p: 2.5 }}>
