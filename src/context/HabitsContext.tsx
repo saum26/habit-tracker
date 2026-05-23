@@ -8,6 +8,8 @@ interface HabitsContextType {
   habits: Habit[];
   completions: HabitCompletion[];
   todayCompletions: Set<string>;
+  yesterdayCompletions: Set<string>;
+  yesterday: string;
   loading: boolean;
   toggleCompletion: (habitId: string, date?: string) => Promise<void>;
   addHabit: (habit: Partial<Habit>) => Promise<void>;
@@ -28,7 +30,8 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = new Date().toISOString().split('T')[0];
+  const getLocalToday = () => format(new Date(), 'yyyy-MM-dd');
+  const [today, setToday] = useState(getLocalToday);
 
   const fetchHabits = useCallback(async () => {
     if (!user) return;
@@ -45,26 +48,61 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     if (data) setCompletions(data);
   }, [user]);
 
+  // Detect when the date changes (midnight rollover or tab coming back into focus)
+  useEffect(() => {
+    const checkDateChange = () => {
+      const newToday = getLocalToday();
+      if (newToday !== today) {
+        setToday(newToday);
+        void fetchRecentCompletions();
+      }
+    };
+
+    const interval = setInterval(checkDateChange, 60 * 1000);
+    document.addEventListener('visibilitychange', checkDateChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', checkDateChange);
+    };
+  }, [today, fetchRecentCompletions]);
+
   useEffect(() => {
     if (!user) { setLoading(false); return; }
     setLoading(true);
     Promise.all([fetchHabits(), fetchRecentCompletions()]).finally(() => setLoading(false));
   }, [user, fetchHabits, fetchRecentCompletions]);
 
+  const yesterday = format(subDays(new Date(today + 'T00:00:00'), 1), 'yyyy-MM-dd');
+
   const todayCompletions = new Set(
     completions.filter(c => c.completed_date === today).map(c => c.habit_id)
   );
 
+  const yesterdayCompletions = new Set(
+    completions.filter(c => c.completed_date === yesterday).map(c => c.habit_id)
+  );
+
   async function toggleCompletion(habitId: string, date: string = today) {
     if (!user) return;
+    // Only allow today and yesterday (grace period) — block anything older
+    if (date !== today && date !== yesterday) return;
+    const isLateCheckIn = date === yesterday;
     const isCompleted = completions.some(c => c.habit_id === habitId && c.completed_date === date);
     if (isCompleted) {
       await supabase.from('habit_completions').delete()
         .eq('habit_id', habitId).eq('completed_date', date).eq('user_id', user.id);
       setCompletions(prev => prev.filter(c => !(c.habit_id === habitId && c.completed_date === date)));
     } else {
-      const { data } = await supabase.from('habit_completions')
-        .insert({ habit_id: habitId, user_id: user.id, completed_date: date }).select().single();
+      const { data, error } = await supabase.from('habit_completions').insert({
+        habit_id: habitId,
+        user_id: user.id,
+        completed_date: date,
+        completed_at: new Date().toISOString(),
+        late_check_in: isLateCheckIn,
+        ...(isLateCheckIn && { original_due_date: date }),
+      }).select().single();
+      if (error) { console.error('toggleCompletion insert failed:', error.message); return; }
       if (data) setCompletions(prev => [...prev, data]);
     }
   }
@@ -163,7 +201,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <HabitsContext.Provider value={{
-      habits, completions, todayCompletions, loading,
+      habits, completions, todayCompletions, yesterdayCompletions, yesterday, loading,
       toggleCompletion, addHabit, updateHabit, deleteHabit,
       getHabitCompletions, addNote, getNotes, getHabitStats, getWeeklyData,
     }}>
